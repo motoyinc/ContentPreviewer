@@ -10,6 +10,8 @@
 #include "IContentBrowserSingleton.h"
 #include "Containers/Ticker.h"
 #include "Engine/StaticMeshActor.h"
+#include "Editor/UnrealEd/Public/Selection.h"
+
 
 
 /// ----------------------CLASS: FMyViewportClient------------------------------------------------------------------ ///
@@ -40,7 +42,7 @@ void S3DViewportWidget::Construct(const FArguments& InArgs)
 	// 注册 FTSTicker 监听蓝图资源变化
 	TickDelegateHandle = FTSTicker::GetCoreTicker().AddTicker(
 		FTickerDelegate::CreateRaw(this, &S3DViewportWidget::HandleTick),		// 将 HandleTick() 方法注册为Ticker回调函数
-		1.0f																				// 每 1s 执行一次回调函数
+		0.5f																				// 每 1s 执行一次回调函数
 	);
 }
 
@@ -72,13 +74,12 @@ TSharedRef<FEditorViewportClient> S3DViewportWidget::MakeEditorViewportClient()
 // 控件主函数
 bool S3DViewportWidget::HandleTick(float DeltaTime)
 {
-	TArray<FAssetData> SelectedAssets;
-	FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser")
-		.Get().GetSelectedAssets(SelectedAssets);
-
-	if (SelectedAssets.Num() == 1)
+	USelection* Selection = GEditor->GetSelectedObjects();
+	
+	if (Selection && Selection->Num() == 1)
 	{
-		UObject* Asset = SelectedAssets[0].GetAsset();
+		UObject* Asset = Selection->GetSelectedObject(0);
+		if (!Asset) return true;
 
 		if (UBlueprint* BP = Cast<UBlueprint>(Asset))
 		{
