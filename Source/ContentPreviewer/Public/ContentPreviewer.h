@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Modules/ModuleManager.h"
+#include "S3DViewportWidget.h"
 
 class FToolBarBuilder;
 class FMenuBuilder;
@@ -26,4 +27,6 @@ private:
 
 private:
 	TSharedPtr<class FUICommandList> PluginCommands;
+	
+	TSharedPtr<S3DViewportWidget> PreviewViewport;
 };

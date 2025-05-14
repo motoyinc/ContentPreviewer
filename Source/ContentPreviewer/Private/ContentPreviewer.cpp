@@ -8,6 +8,7 @@
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Text/STextBlock.h"
 #include "ToolMenus.h"
+#include "S3DViewportWidget.h"
 
 static const FName ContentPreviewerTabName("ContentPreviewer");
 
@@ -54,23 +55,10 @@ void FContentPreviewerModule::ShutdownModule()
 
 TSharedRef<SDockTab> FContentPreviewerModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs)
 {
-	FText WidgetText = FText::Format(
-		LOCTEXT("WindowWidgetText", "Add code to {0} in {1} to override this window's contents"),
-		FText::FromString(TEXT("FContentPreviewerModule::OnSpawnPluginTab")),
-		FText::FromString(TEXT("ContentPreviewer.cpp"))
-		);
-
 	return SNew(SDockTab)
 		.TabRole(ETabRole::NomadTab)
 		[
-			// Put your tab content here!
-			SNew(SBox)
-			.HAlign(HAlign_Center)
-			.VAlign(VAlign_Center)
-			[
-				SNew(STextBlock)
-				.Text(WidgetText)
-			]
+			SAssignNew(PreviewViewport, S3DViewportWidget)
 		];
 }
 
