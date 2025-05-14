@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "ContentPreviewer",
+	"Description": "https://github.com/motoyinc",
+	"Category": "Other",
+	"CreatedBy": "Motoyinc",
+	"CreatedByURL": "https://github.com/motoyinc/ContentPreviewer",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": true,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "ContentPreviewer",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}

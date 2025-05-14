@@ -1,0 +1,20 @@
+﻿# 编译输出
+Binaries/
+Intermediate/
+DerivedDataCache/
+Saved/
+
+# Visual Studio 缓存／解决方案
+*.sln
+*.VC.db
+*.VC.opendb
+*.suo
+*.user
+*.userosscache
+*.opensdf
+.vs/
+.idea/
+
+# 系统文件
+.DS_Store
+Thumbs.db
