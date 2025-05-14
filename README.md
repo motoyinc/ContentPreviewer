@@ -2,6 +2,8 @@
 
 一个用于 Unreal Engine 5 的编辑器插件，用于快速预览内容浏览器中选中的资源，提供类似 Unity Inspector 的实时 3D 预览体验。
 
+<img src="https://github.com/user-attachments/assets/87119299-3f05-4a8b-91e7-9546cdaf8f16" width="500px" />
+
 ---
 
 ## ✨ 插件功能（开发中）
