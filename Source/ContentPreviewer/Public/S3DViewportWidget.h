@@ -17,6 +17,7 @@ public:
 	
 	void UpdatePreviewActor(UClass* InActorClass);				// 更新窗口里的Actor实例
 	void UpdatePreviewStaticMesh(UStaticMesh* StaticMesh);		// 更新窗口里的Mesh实例
+	void UpdatePreviewMaterial(UMaterialInterface* Material, const FString& Shape);
 
 protected:
 	virtual TSharedRef<FEditorViewportClient> MakeEditorViewportClient() override;		// 视口控制器
