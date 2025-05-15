@@ -218,13 +218,6 @@ void S3DViewportWidget::UpdatePreviewMaterial(UMaterialInterface* Material, cons
 	StaticActor->GetStaticMeshComponent()->SetStaticMesh(PreviewMesh);
 	StaticActor->GetStaticMeshComponent()->SetMaterial(0, Material);
 	StaticActor->SetActorScale3D(FVector(1));
-
-
+	
 	ViewportClient->FocusViewportOnBox(StaticActor->GetComponentsBoundingBox());
-
-	FBox Bounds = PreviewActor->GetComponentsBoundingBox();
-	FVector Center = Bounds.GetCenter();
-	ViewportClient->bUsingOrbitCamera = true;
-	ViewportClient->SetViewLocationForOrbiting(Center + FVector(0, -300, 150));
-	ViewportClient->SetLookAtLocation(Center);
 }
