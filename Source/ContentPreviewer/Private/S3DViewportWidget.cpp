@@ -10,7 +10,7 @@
 #include "IContentBrowserSingleton.h"
 #include "Containers/Ticker.h"
 #include "Engine/StaticMeshActor.h"
-
+#include "Materials/MaterialInstanceConstant.h"
 
 /// ----------------------CLASS: FMyViewportClient------------------------------------------------------------------ ///
 class FMyViewportClient : public FEditorViewportClient
@@ -40,7 +40,7 @@ void S3DViewportWidget::Construct(const FArguments& InArgs)
 	// 注册 FTSTicker 监听蓝图资源变化
 	TickDelegateHandle = FTSTicker::GetCoreTicker().AddTicker(
 		FTickerDelegate::CreateRaw(this, &S3DViewportWidget::HandleTick),		// 将 HandleTick() 方法注册为Ticker回调函数
-		1.0f																				// 每 1s 执行一次回调函数
+		0.25f																				// 每 0.25s 执行一次回调函数
 	);
 }
 
@@ -101,10 +101,22 @@ bool S3DViewportWidget::HandleTick(float DeltaTime)
 		{
 			// TODO: 实现 SkeletalMesh 预览（创建 Actor 并附上 SkeletalMeshComponent）
 		}
-		else if (UMaterialInterface* Material = Cast<UMaterialInterface>(Asset))
+		
+		else if (UMaterialInterface* Mat = Cast<UMaterialInterface>(Asset))
 		{
-			// TODO: 实现材质预览（创建球体并赋予材质）
+			if (LastPreviewedAsset.Get() != Mat)
+			{
+				LastPreviewedAsset = Mat;
+				if (UMaterial* BaseMat = Cast<UMaterial>(Mat))
+				{
+					UMaterialInstanceConstant* TempInstance = NewObject<UMaterialInstanceConstant>(GetTransientPackage(), NAME_None, RF_Transient);
+					TempInstance->SetParentEditorOnly(BaseMat);
+					Mat = TempInstance;
+				}
+				UpdatePreviewMaterial(Mat, TEXT("Sphere"));
+			}
 		}
+
 		else if (UTexture2D* Texture = Cast<UTexture2D>(Asset))
 		{
 			// TODO: 实现贴图预览（用一个平面或 UI 显示）
@@ -168,4 +180,44 @@ void S3DViewportWidget::UpdatePreviewStaticMesh(UStaticMesh* StaticMesh)
 
 	FBox Bounds = MeshActor->GetComponentsBoundingBox();
 	ViewportClient->FocusViewportOnBox(Bounds);
+}
+
+void S3DViewportWidget::UpdatePreviewMaterial(UMaterialInterface* Material, const FString& Shape)
+{
+	if (!Material || !PreviewScene) return;
+	if (PreviewActor && PreviewActor->IsValidLowLevel())
+	{
+		PreviewActor->Destroy();
+		PreviewActor = nullptr;
+	}
+
+	FString ShapePath;
+	if (Shape == "Sphere")
+	{
+		ShapePath = TEXT("/Engine/BasicShapes/Sphere.Sphere");
+	}
+	else if (Shape == "Plane")
+	{
+		ShapePath = TEXT("/Engine/BasicShapes/Plane.Plane");
+	}
+	else if (Shape == "Cube")
+	{
+		ShapePath = TEXT("/Engine/BasicShapes/Cube.Cube");
+	}
+	else
+	{
+		ShapePath = TEXT("/Engine/BasicShapes/Sphere.Sphere");
+	}
+
+	UStaticMesh* PreviewMesh = LoadObject<UStaticMesh>(nullptr, *ShapePath);
+	if (!PreviewMesh) return;
+
+	UWorld* World = PreviewScene->GetWorld();
+	PreviewActor = World->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass());
+	AStaticMeshActor* StaticActor = Cast<AStaticMeshActor>(PreviewActor);
+	StaticActor->GetStaticMeshComponent()->SetStaticMesh(PreviewMesh);
+	StaticActor->GetStaticMeshComponent()->SetMaterial(0, Material);
+	StaticActor->SetActorScale3D(FVector(1));
+	
+	ViewportClient->FocusViewportOnBox(StaticActor->GetComponentsBoundingBox());
 }
